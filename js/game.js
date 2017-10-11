@@ -1,10 +1,13 @@
 var game = {
     init: function () {
+        this.keysDown = {};
+
         this.initializeCanvas();
         this.initializeAssets();
         this.initializeCharacters();
 
-        setTimeout(this.drawCanvasElements.bind(this), 200);
+        this.bindKeyboardEvents();
+        this.startAnimation();
     },
 
     initializeCanvas: function () {
@@ -37,9 +40,32 @@ var game = {
         };
     },
 
+    bindKeyboardEvents: function () {
+        document.addEventListener('keydown', this.getKeyboardEvent.bind(this));
+        document.addEventListener('keyup', this.getKeyboardEvent.bind(this));
+    },
+
+    getKeyboardEvent: function (event) {
+        if (event.type == 'keydown') this.keysDown[event.keyCode] = true;
+        if (event.type == 'keyup') delete this.keysDown[event.keyCode];
+    },
+
+    executeKeyBoardEvents: function (timelapse) {
+        if (38 in this.keysDown) this.catcher.y -= 1;
+        if (40 in this.keysDown) this.catcher.y += 1;
+        if (37 in this.keysDown) this.catcher.x -= 1;
+        if (39 in this.keysDown) this.catcher.x += 1;
+    },
+
     drawCanvasElements: function () {
+        this.executeKeyBoardEvents();
         gameUtils.drawImage(this.context, this.backgroundImage, 0, 0);
         gameUtils.drawImage(this.context, this.catcherImage, this.catcher.x, this.catcher.y);
         gameUtils.drawImage(this.context, this.spendImage, this.spend.x, this.spend.y);
+    },
+
+    startAnimation: function () {
+        this.drawCanvasElements();
+        requestAnimationFrame(this.startAnimation.bind(this));
     }
 };
