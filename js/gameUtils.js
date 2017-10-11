@@ -4,5 +4,8 @@ var gameUtils = {
         image.src = src;
 
         return image;
+    },
+    drawImage: function (ctx, image, x, y) {
+        ctx.drawImage(image, x, y);
     }
 };
